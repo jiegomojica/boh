@@ -1,0 +1,77 @@
+//DAILY TRADING RANGE DTR
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) Vol " +WriteVal( V, 1.0 ) +" {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 )) ));
+Plot( C, "Close", ParamColor("Color", colorBlack ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() );
+_SECTION_END();
+if( ParamToggle("BoH DTR", "No|Yes", 1))
+{
+_SECTION_BEGIN("BOH DTR");
+fh = fopen("C://Temp//ruel//BoH//DTR//DTR.csv", "r" );
+if( fh )
+{
+while( ! feof( fh ) )
+{
+line = fgets( fh );
+Ticker = StrExtract( line,0 );
+if ( Ticker == Name() )
+{
+Symbol = Ticker;
+LISstr=StrExtract( line,1 );
+LIS=StrToNum( LISstr );
+RSstr=StrExtract( line,2 );
+RS=StrToNum( RSstr );
+MPstr=StrExtract( line,3 );
+MP=StrToNum( MPstr );
+RRstr=StrExtract( line,4 );
+RR=StrToNum( RRstr );
+BSstr=StrExtract( line,5 );
+BS=StrToNum( BSstr );
+        plotRanges = ParamToggle("Plot Ranges","Off|On",1);             
+        if(plotRanges)
+        {
+            Plot(LastValue(LIS), "", colorTan, styleDashed, Null, Null, 26, 0);
+            Plot(LastValue(RS), "", colorGreen, styleDashed, Null, Null, 26, 0);
+            Plot(LastValue(RR), "", colorRed, styleDashed, Null, Null, 26, 0);
+            Plot(LastValue(MP), "", colorWhite, styleDashed, Null, Null, 26, 0);
+            Plot(LastValue(BS), "", colorBlue, styleDashed, Null, Null, 26, 0);
+        
+            x = LastValue( BarIndex() ) + 9;
+            DTRLabelColor = colorWhite;
+            PlotText( "LIS", x, LIS, DTRLabelColor, bkcolor = colorDefault);
+            PlotText( "RS", x, RS, DTRLabelColor, bkcolor = colorDefault);
+            PlotText( "MP", x, MP, DTRLabelColor, bkcolor = colorDefault);
+            PlotText( "RR", x, RR, DTRLabelColor, bkcolor = colorDefault);
+            PlotText( "BS", x, BS, DTRLabelColor, bkcolor = colorDefault);
+        }
+        
+        // Oversold Area
+        line125 = RS-(0.125*(RS-RR));
+        line250 = RS-(0.250*(RS-RR));
+        // Overbought Area
+        line750 = RS-(0.750*(RS-RR));
+        line886 = RS-(0.886*(RS-RR));
+        
+        plotOBOSZones = ParamToggle("Plot OB/OS Zones","Off|On",0);             
+        if(plotOBOSZones)
+        {
+            //Oversold Area
+            PlotOHLC(LastValue(line125),LastValue(line125),LastValue(RS),LastValue(RS),"",colorLime,styleCloud|styleNoLabel, 10, 10, 26 ); 
+            //Extreme Oversold Area
+            PlotOHLC(LastValue(LIS),LastValue(LIS),LastValue(RS),LastValue(RS),"",colorGreen,styleCloud|styleNoLabel, 10, 10, 26 ); 
+            //Overbought Area
+            PlotOHLC(LastValue(line886),LastValue(line886),LastValue(RR),LastValue(RR),"",colorLightOrange,styleCloud|styleNoLabel, 10, 10, 26 ); 
+            //Extreme Overbought Area
+            PlotOHLC(LastValue(BS),LastValue(BS),LastValue(RR),LastValue(RR),"",colorOrange,styleCloud|styleNoLabel, 10, 10, 26 ); 
+        }
+    }
+    //_TRACE( Name() );    
+}
+fclose( fh ); 
+}
+else
+{
+Error;("ERROR: file cannot be opened");
+}
+_SECTION_END();
+}
