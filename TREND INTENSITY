@@ -1,0 +1,24 @@
+//TREND INTENSITY
+_SECTION_BEGIN("Trend Intensity");
+TI = MA(C,7)/MA(C,65);
+HighestTI= HHV(TI,250);
+LowestTI= LLV(TI,250);
+Plot(TI,"TI",ParamColor("TI", colorOrange),styleLine);
+Plot(1.05, "", colorDarkGreen, styleNoLabel);
+Plot(0.94, "", colorRed, styleNoLabel);
+if(ParamToggle("ColorArea","No|Yes", 0))
+{
+if(LastValue(HighestTI) >= 1.05)
+{
+PlotOHLC(LastValue(HighestTI),LastValue(HighestTI),1.05,1.05,"",colorDarkGreen,styleCloud|styleNoLabel );
+}
+if(LastValue(LowestTI) <= 0.94)
+{
+PlotOHLC(0.94, 0.94,LastValue(LowestTI),LastValue(LowestTI),"",colorRed,styleCloud|styleNoLabel);
+}
+}
+Buy=Cross(TI, 1.05);
+Sell=Cross(1.05, TI);
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone) ,colorBlue);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed);
+_SECTION_END();
