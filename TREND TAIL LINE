@@ -1,0 +1,10 @@
+// TREND TAIL LINE
+_SECTION_BEGIN("TTL 2 colors");
+Plot( LinearReg( C, 45 ), _DEFAULT_NAME(), ParamColor( "Color", colorWhite ), ParamStyle("Style") );
+Color = ParamColor("TTL Color",ColorRGB(53,82,111));
+Style = ParamStyle("Style", styleLine | styleNoLabel ) | styleNoLabel;
+Plot( bbt = BBandTop( LinearReg( C, 45 ), 5, 1 ), "BBTop" + _PARAM_VALUES(), Color, Style );
+Plot( bbb = BBandBot( LinearReg( C, 45 ), 5, 1 ), "BBBot" + _PARAM_VALUES(), color, Style );
+colorcloud = IIf(bbb < LinearReg(C,45) AND bbt < LinearReg(C,45),ParamColor("UP Color",colorPaleGreen),ParamColor("Down Color",colorPink));
+PlotOHLC( bbt, bbt, bbb, bbb, "", colorcloud, styleNoLabel | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+_SECTION_END();
