@@ -1,0 +1,155 @@
+//VOLUME STATISTICS
+_SECTION_BEGIN("STAT");
+stats = ParamToggle("Statistics","Off|On",1);
+autohide = ParamToggle("Auto Hide","Off|On",1);
+invwap = ParamToggle("Invert VWAP Color","Off|On",0);
+tm =Param("Top Margin",30,0,1000,1)-20;
+vs =1+Param("Vertical Spacing",0,0,100,1)/100;
+hs =1+Param("Horizontal Spacing",0,0,100,1)/100;
+function Hide()
+{
+MX = GetCursorXPosition( 1 );
+MY = GetCursorYPosition( 1 );
+LeftClick = GetCursorMouseButtons() == 9;
+// Place Ranging Button
+ButtonSize=100;
+X2 = 140hs;
+X1 = 1;
+Y1 = 18;
+Y2 =315vs+tm;
+// GfxSelectPen( colorBlack , 1 );
+// GfxSelectSolidBrush( colorYellow );
+// GfxRectangle( X1, Y1, X2, Y2 );
+// GfxSetTextColor( colorBlack );
+// GfxSetBkMode( 1 );
+OnButton = MX <= X2 AND MX >= X1;
+if ( OnButton)
+{
+stats=0;
+}
+}
+//Demo Code
+if(autohide1){
+Hide();
+}
+if(stats1)
+{
+vwap=(H+L+C)/3V;
+mvwapToday = 1;
+mvwap5 = 5;
+mvwap10 = 10;
+mvwap20 = 20;
+mvwap65 = 65;
+mvwap250 = 250;
+TimeFrameSet(inDaily);
+MVWAP1 = Sum(vwap, mvwapToday)/Sum(Volume,mvwapToday);
+MVWAP5 = Sum(vwap, mvwap5)/Sum(Volume,mvwap5);
+MVWAP10 = Sum(vwap, mvwap10)/Sum(Volume,mvwap10);
+MVWAP20= Sum(vwap, mvwap20)/Sum(Volume,mvwap20);
+MVWAP65 = Sum(vwap, mvwap65)/Sum(Volume,mvwap65);
+MVWAP250= Sum(vwap, mvwap250)/Sum(Volume,mvwap250);
+maxmvwap = Max(mvwap1,Max(mvwap5,Max(mvwap10,Max(mvwap20,Max(mvwap65,mvwap250)))));
+minmvwap = Min(mvwap1,Min(mvwap5,Min(mvwap10,Min(mvwap20,Min(mvwap65,mvwap250)))));
+mvwap1Str = NumToStr(MVWAP1, 8.4);
+mvwap5Str = NumToStr(MVWAP5, 8.4);
+mvwap10Str = NumToStr(MVWAP10, 8.4);
+mvwap20Str = NumToStr(MVWAP20, 8.4);
+mvwap65Str = NumToStr(MVWAP65, 8.4);
+mvwap250Str = NumToStr(MVWAP250, 8.4);
+maxmvwapstr = NumToStr(maxmvwap, 8.4);
+minmvwapstr = NumToStr(minmvwap, 8.4);
+GfxSetOverlayMode(0);
+GfxSelectPen(colorGrey50,1,5);
+GfxSelectSolidBrush(colorDarkGrey);
+GfxSelectFont("Calibri", Param("Font Size",10,0,100,1), 400, False, False, 0);
+GfxSetTextColor(colorWhite);
+GfxSetBkColor(colorDarkGrey);
+GfxRectangle(1, tm+20, 140hs, 315vs+tm+55);
+GfxTextOut("VWAP:", 10, 20vs+tm);
+GfxTextOut("Today: " , 10, 38vs+tm);
+GfxTextOut("5 days: ", 10, 56vs+tm);
+GfxTextOut("10 days: " , 10, 74vs+tm);
+GfxTextOut("20 days: ", 10, 92vs+tm);
+GfxTextOut("65 days: ", 10, 110vs+tm);
+GfxTextOut("250 days: " , 10, 128vs+tm);
+GfxTextOut("Max: " , 10, 148vs+tm);
+GfxTextOut("Min: " , 10, 166vs+tm);
+//Volume Stat
+max10d = HHV(Volume, 10);
+ave20d = MA(Volume, 20);
+ave50d = MA(Volume, 50);
+max250d = HHV(Volume, 250);
+Mean = MA(Volume, 250);
+sd1 = StDev(Volume, 250) + Mean;
+sd2 = StDev(Volume, 250)2 + Mean;
+sd3 = StDev(Volume, 250)3 + Mean;
+Volstr = NumToStr(Volume, 1.0);
+str10d = NumToStr(max10D, 1.0);
+str20D = NumToStr(ave20D, 1.0);
+str50D = NumToStr(ave50D, 1.0);
+str250D = NumToStr(max250D, 1.0);
+strMean = NumToStr(Mean, 1.0);
+Strsd1 = NumToStr(sd1, 1.0);
+Strsd2 = NumToStr(sd2, 1.0);
+Strsd3 = NumToStr(sd3, 1.0);
+GfxTextOut("Volume:", 10, 150vs+tm+54);
+GfxTextOut("10D max: " , 10, 168vs+tm+54);
+GfxTextOut("20D ave: ", 10, 186vs+tm+54);
+GfxTextOut("50D ave: " , 10, 204vs+tm+54);
+GfxTextOut("52wk hi: ", 10, 222vs+tm+54);
+GfxTextOut("Mean: ", 10, 240vs+tm+54);
+GfxTextOut("1sd: " , 10, 258vs+tm+54);
+GfxTextOut("2sd: " , 10, 276vs+tm+54);
+GfxTextOut("3sd: " , 10, 294vs+tm+54);
+GfxSetTextAlign(2);
+GfxSetTextColor(ParamColor("Out of Range",colorPink));
+GfxTextOut(mvwap1Str, 130hs, 38vs+tm);
+GfxTextOut(mvwap5Str, 130hs, 56vs+tm);
+GfxTextOut(mvwap10Str, 130hs, 74vs+tm);
+GfxTextOut(mvwap20Str, 130hs, 92vs+tm);
+GfxTextOut(mvwap65Str, 130hs, 110vs+tm);
+GfxTextOut(mvwap250Str, 130hs, 128vs+tm);
+GfxTextOut(maxmvwapstr, 130hs, 148vs+tm);
+GfxTextOut(minmvwapstr, 130hs, 166vs+tm);
+GfxTextOut(Volstr, 130hs, 150vs+tm+54);
+GfxTextOut(str10d, 130hs, 168vs+tm+54);
+GfxTextOut(str20D, 130hs, 186vs+tm+54);
+GfxTextOut(str50D, 130hs, 204vs+tm+54);
+GfxTextOut(str250D , 130hs, 222vs+tm+54);
+GfxTextOut(strMean, 130hs, 240vs+tm+54);
+GfxTextOut(Strsd1, 130hs, 258vs+tm+54);
+GfxTextOut(Strsd2, 130hs, 276vs+tm+54);
+GfxTextOut(Strsd3, 130hs, 294vs+tm+54);
+GfxSetTextColor(ParamColor("Within Range", colorPaleGreen));
+if(invwap==1){
+GfxTextOut(writeif(Close>=mvwap1,mvwap1Str,""), 130hs, 38vs+tm);
+GfxTextOut(writeif(close>=mvwap5,mvwap5Str,""), 130hs, 56vs+tm);
+GfxTextOut(writeif(close>=mvwap10,mvwap10Str,""), 130hs, 74vs+tm);
+GfxTextOut(writeif(close>=mvwap20,mvwap20Str,""), 130hs, 92vs+tm);
+GfxTextOut(writeif(close>=mvwap65,mvwap65Str,""), 130hs, 110vs+tm);
+GfxTextOut(writeif(close>=mvwap250,mvwap250Str,""), 130hs, 128vs+tm);
+GfxTextOut(WriteIf(close>=maxmvwap,maxmvwapstr,""), 130hs, 148vs+tm);
+GfxTextOut(WriteIf(close>=minmvwap,minmvwapstr,""), 130hs, 166vs+tm);
+} else{
+GfxTextOut(writeif(Close<=mvwap1,mvwap1Str,""), 130hs, 38vs+tm);
+GfxTextOut(writeif(close<=mvwap5,mvwap5Str,""), 130hs, 56vs+tm);
+GfxTextOut(writeif(close<=mvwap10,mvwap10Str,""), 130hs, 74vs+tm);
+GfxTextOut(writeif(close<=mvwap20,mvwap20Str,""), 130hs, 92vs+tm);
+GfxTextOut(writeif(close<=mvwap65,mvwap65Str,""), 130hs, 110vs+tm);
+GfxTextOut(writeif(close<=mvwap250,mvwap250Str,""), 130hs, 128vs+tm);
+GfxTextOut(WriteIf(close<=maxmvwap,maxmvwapstr,""), 130hs, 148vs+tm);
+GfxTextOut(WriteIf(close<=minmvwap,minmvwapstr,""), 130hs, 166vs+tm);
+}
+GfxTextOut(WriteIf(V>=max10D,str10d,""), 130hs, 168vs+tm+54);
+GfxTextOut(WriteIf(V>=ave20D,str20D,""), 130hs, 186vs+tm+54);
+GfxTextOut(WriteIf(V>=ave50D,str50D,""), 130hs, 204vs+tm+54);
+GfxTextOut(WriteIf(V>=max250D,str250D,"") , 130hs, 222vs+tm+54);
+GfxTextOut(WriteIf(V>=Mean,strMean,""), 130hs, 240vs+tm+54);
+GfxTextOut(WriteIf(V>=sd1,Strsd1,""), 130hs, 258vs+tm+54);
+GfxTextOut(WriteIf(V>=sd2,Strsd2,""), 130hs, 276vs+tm+54);
+GfxTextOut(WriteIf(V>=sd3,Strsd3,""), 130hs, 294*vs+tm+54);
+}
+//VWAP Stat
+_SECTION_END();
+replyalarmthumb_up
+more_vert
