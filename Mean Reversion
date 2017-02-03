@@ -1,0 +1,36 @@
+//MEAN REVERSION INDICATOR
+_SECTION_BEGIN("Stochastic %D");
+periods = Param( "Periods", 15, 1, 200, 1 );
+Ksmooth = Param( "%K avg", 3, 1, 200, 1 );
+Dsmooth = Param( "%D avg", 3, 1, 200, 1 );
+Plot( StochD( periods , Ksmooth, DSmooth ), _DEFAULT_NAME(), ParamColor( "Color", colorBlack ), ParamStyle("Style", styleThick) );
+_SECTION_END();
+Length=Param("Length",15,1,300,1);
+SSd=StochD(Length);
+TI = MA(C,7)/MA(C,65);
+Buy=
+Cross(SSd, 10) OR
+Cross(SSd, 20) OR
+Cross(SSd, 30) OR
+Cross(SSd, 40) OR
+Cross(SSd, 50) OR
+Cross(SSd, 60) OR
+Cross(SSd, 70) ;
+Sell=
+Cross(90, SSd) OR
+Cross(80, SSd) OR
+Cross(70, SSd) OR
+Cross(60, SSd) OR
+Cross(50, SSd) OR
+Cross(40, SSd) OR
+Cross(30, SSd);
+Buy = ExRem(Buy, Sell);
+Sell = ExRem(Sell, Buy); // THIS WILL REMOVE EXESS SIGNALS ON A CHART OR IN AN EXPLORATION
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone) ,colorGreen);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed);
+Plot(50,"",colorBlack,styleDashed | stylethick|styleNoLabel);
+Plot(90,"",colorOrange,styleThick|styleNoLabel);
+Plot(70,"",colorBlack,styleDashed | stylethick|styleNoLabel);
+Plot(10,"",colorOrange,styleThick|styleNoLabel);
+Plot(30,"",colorBlack,styleDashed | stylethick|styleNoLabel);
+_SECTION_END();
