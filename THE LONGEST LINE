@@ -1,0 +1,21 @@
+//THE LONGEST LINE
+_SECTION_BEGIN("LongestLine");
+function GetBarOfHighVol(fValue)
+{
+for(i=1; i<=34; i++)
+{
+if(LastValue(Ref(V, -i)) == fValue)
+{
+break;
+}
+}
+return i;
+}
+x0 = BarCount-34;
+HighVol = HHV(V, 34);
+BarsOfHighVol = GetBarOfHighVol(LastValue(HighVol));
+y0 = (LastValue(Ref(C, -BarsOfHighVol)) + LastValue(Ref(H, -BarsOfHighVol)) + LastValue(Ref(L, -BarsOfHighVol))) / 3;
+x1 = BarCount+5;
+longestLine = LineArray(x0, y0, x1, y0);
+Plot(longestLine , "LL", ParamColor("Longest Line",colorOrange), styleLine|styleDashed|styleThick, Null, Null, 20, 0, 0);
+_SECTION_END();
