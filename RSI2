@@ -1,0 +1,31 @@
+_SECTION_BEGIN("RSI");
+SetChartOptions(0,0,chartGrid30|chartGrid70);
+periods = Param( "Periods", 2, 1, 200, 1 );
+Plot( RSI( periods), _DEFAULT_NAME(), ParamColor( "Color", colorBlack ), ParamStyle("Style")  );
+Plot(50,"",colorBlack,styleDashed|styleNoLabel);
+Plot(10,"",colorLightGrey,styleDashed|styleNoLabel);
+Plot(90,"",colorLightGrey,styleDashed|styleNoLabel);
+Plot(98,"",colorOrange,styleThick|styleNoLabel);
+Plot(2,"",colorOrange,styleThick|styleNoLabel);
+_SECTION_END();
+
+Buy=
+Cross(2, RSI(2)) OR 
+Cross(RSI(2), 2) OR 
+Cross(RSI(2), 5) OR 
+Cross(RSI(2), 10) OR 
+Cross(RSI(2), 20) OR
+Cross(RSI(2), 70) ;
+
+Sell=
+Cross(RSI(2),98) OR
+Cross(98, RSI(2)) OR 
+Cross(95, RSI(2)) OR 
+Cross(90, RSI(2)) OR
+Cross(80, RSI(2)) OR 
+Cross(30, RSI(2)) ;
+
+Buy = ExRem(Buy, Sell);
+Sell = ExRem(Sell, Buy); // THIS WILL REMOVE EXESS SIGNALS ON A CHART OR IN AN EXPLORATION
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone) ,colorGreen);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed);
